@@ -24,21 +24,40 @@ class SongsController < ApplicationController
     end
   end
 
-  def new
-    @song = Song.new
+  def new  
+    
+    if params[:artist_id] 
+         @switch = SongsHelper.artist_switch(params[:artist_id])
+      if !(@switch)
+          redirect_to artists_path
+      end
+    end 
+      @artist = Artist.find_by(id: params[:artist_id])
+    @song = Song.new(artist_id: params[:artist_id])
   end
 
-  def create
+  def create 
+    
+      @switch = SongsHelper.am_valid?(params[:song][:artist_id])
+       if !(@switch) 
+        redirect_to artists_path 
+       end
     @song = Song.new(song_params)
-
-    if @song.save
+    if @song.valid?
+     @song.save
       redirect_to @song
     else
       render :new
     end
   end
 
-  def edit
+  def edit 
+     @switch = SongsHelper.am_valid?(params[:artist_id]) 
+     binding.pry
+       if !(@switch) 
+        redirect_to artists_path 
+       end
+
     @song = Song.find(params[:id])
   end
 
@@ -64,7 +83,7 @@ class SongsController < ApplicationController
   private
 
   def song_params
-    params.require(:song).permit(:title, :artist_name)
+    params.require(:song).permit(:title, :artist_name, :artist_id)
   end
 end
 
