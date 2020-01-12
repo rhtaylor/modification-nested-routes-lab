@@ -51,17 +51,28 @@ class SongsController < ApplicationController
     end
   end
 
-  def edit 
-     @switch = SongsHelper.am_valid?(params[:artist_id]) 
-     binding.pry
-       if !(@switch) 
-        redirect_to artists_path 
-       end
-
-    @song = Song.find(params[:id])
+  def edit  
+    if params[:artist_id] 
+      @artist = Artist.find_by(id: params[:artist_id])  
+        if  @artist.nil? 
+          redirect_to artists_path 
+        else 
+           @song_array = @artist.songs.where(id: params[:id]) 
+              if @song_array.empty? 
+              redirect_to artist_songs_path(@artist)
+              else 
+                @song = @song_array.first 
+                @song 
+                
+              end
+        end 
+     else 
+      @song = Song.find(params[:id]) 
+     end 
   end
 
-  def update
+  def update 
+    
     @song = Song.find(params[:id])
 
     @song.update(song_params)

@@ -37,7 +37,7 @@ RSpec.describe SongsController do
     it "validates song for artist when nested" do
       get :edit, params: { artist_id: @artist.id, id: 1234 }
       expect(response).to redirect_to artist_songs_path(@artist)
-      binding.pry
+      
     end
   end
 
